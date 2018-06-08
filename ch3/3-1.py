@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 import common.common as cm
 import pprint as pp
+import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
 font_name = font_manager.FontProperties(fname="c:/Windows/Fonts/malgun.ttf").get_name()
 rc('font', family=font_name)
 import os
 import numpy as np
-from matplotlib import pyplot
 
 # Step 2. 버스위치정보조회를 위한 요청변수 및 요청주소 등을 구성합니다.
 url = 'http://ws.bus.go.kr/api/rest/buspos/getBusPosByRouteSt' # 노선별 특정 정류소 접근 버스 위치정보 목록조회(busRouteId, startOrd, endOrd)
@@ -61,7 +61,7 @@ b = np.trim_zeros(stat[:, 1])
 
 bins = np.linspace(-0.5, 1.5, 10)
 
-pyplot.style.use('seaborn-deep')
-pyplot.hist([a, b], bins, label=['stopFlag', 'busType'])
-pyplot.legend(loc='upper right')
-pyplot.show()
+plt.style.use('seaborn-deep')
+plt.hist([a, b], bins, label=['stopFlag', 'busType'])
+plt.legend(loc='upper right')
+plt.show()
