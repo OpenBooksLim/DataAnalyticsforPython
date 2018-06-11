@@ -19,7 +19,7 @@ c = []
 params = 'serviceKey=%s' % cm.get_serviceKey()
 print('params : ', params)
 # 저장을 원할 경우, 화일명을 정의한다.
-fn = os.getcwd() + '/data/' + '4-2.da'
+fn = os.getcwd() + '/data/' + 'RegisteredHorse.da'
 # 서비스 호출
 _c = cm.call_serviceF(url, params, 'Y', fn)
 c.append(_c)
@@ -99,12 +99,3 @@ for key, value in sex_counts.items():
     print('전체(%d)에서 경주의 성별이 \'%s\'을(를) 뽑을 확률은 %1.2f입니다.' % (number_of_total_event_occurs, key, tv))
 
 print(sp)
-
-cp = pd.Series([0 for i in range(0, 12)]) # Conditional Probability
-for c, s in stat:
-    for a in range(0, len(color)):
-        for b in range(0, len(sex)):
-            if ((c == color[a]) and (s == sex[b])):
-                cp[(a * 3) + b] += 1
-
-print(cp, (cp / number_of_total_event_occurs))
