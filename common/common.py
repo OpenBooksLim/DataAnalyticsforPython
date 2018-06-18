@@ -5,6 +5,7 @@ import xmltodict
 import xmltojson, utils
 import pprint, json
 import os, time
+import logging
 
 # serviceKey를 global로 관리
 def get_serviceKey():
@@ -18,7 +19,7 @@ def call_service(url, params):
     # print('Processing for call_service(url, params)')
     # service = '%s?serviceKey=%s&%s' % (url, get_serviceKey(), params)
     service = '%s?%s' % (url, params)
-    print(service)
+    # print(service)
 
     # 오픈 API 호출
     try:
@@ -28,7 +29,8 @@ def call_service(url, params):
 
         return c
     except Exception as e:
-        print(str(e))
+        # print(str(e))
+        pass
 
 # 1.2 (1.1과 동일), 파라미터 : url, params, YN(화일저장 유무), fn(file name, 화일명)
 def call_serviceF(url, params, YN = None, fn = None):
@@ -41,7 +43,8 @@ def call_serviceF(url, params, YN = None, fn = None):
 
         return c
     except Exception as e:
-        print(str(e))
+        # print(str(e))
+        pass
 
 # 2-1. XML을 딕셔너리로 변환합니다.
 # 파라미터 : c(XML contents)
@@ -55,7 +58,8 @@ def x2d(c):
 
         return _dict
     except Exception as e:
-        print(str(e))
+        # print(str(e))
+        pass
 
 # 2-2. XML을 JSON으로 변환합니다.
 # 파라미터 : c(XML contents)
@@ -71,7 +75,8 @@ def x2j(c):
 
         return _djson
     except Exception as e:
-        print(str(e))
+        # print(str(e))
+        pass
 
 # 3. JSON을 딕셔너리로 변환합니다.
 # 파라미터 : c(JSON contents)
@@ -85,9 +90,10 @@ def j2d(c):
 
         return _json
     except Exception as e:
-        print(str(e))
+        # print(str(e))
+        pass
 
-# 4. Created file
+# 4. Created & open file
 def create_file(content, fn = None):
     if (fn == None):
         fn = os.getcwd() + '/data/' + str(int(round(time.time() * 1000)))
@@ -97,13 +103,40 @@ def create_file(content, fn = None):
     file.close()
 
     # Open & read file
+    # open_file(fn)
+
+def open_file(fn, rtn = False):
     file = open(fn, 'r', encoding='utf-8')
-    print(file.read())
+
+    if not rtn:
+        print(file.read())
+    else:
+        return file.read()
+
     file.close()
 
 # 5. 함수 시험용 : 추후 삭제 예정
 def hello():
     return 'Hello, World!!!'
+
+# 6. Logging
+def pre_logging():
+    logger = logging.getLogger('DataAnalytics')
+    fn = os.getcwd() + '/../log/' + time.strftime('%Y%m%d') + '.log'
+    hdlr = logging.FileHandler(fn, encoding = "utf-8")
+    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr)
+    logger.setLevel(logging.INFO)
+
+    return logger
+
+def logF(f, log):
+    if not isinstance(log, str):
+        log = str(log)
+
+    print(log)
+    f.info(log)
 
 # common.py에서 필요한 메모 : 추후 삭제 예정
 '''
@@ -124,4 +157,7 @@ if __name__ == "__main__":
 #    _djson = x2j(c[0])
 #    friend = _djson['friends']
 #    pprint.pprint(friend)
-    create_file('adfadfadsfa')
+    a = ['adfasf', 'dsfadsfdasd']
+    logF(a)
+    b = 'asdfadsfadsfadsfdasfasd'
+    logF(b)
