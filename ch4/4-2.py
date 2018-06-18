@@ -8,10 +8,9 @@ font_name = font_manager.FontProperties(fname="c:/Windows/Fonts/malgun.ttf").get
 rc('font', family=font_name)
 import os
 import numpy as np
-from datetime import date, timedelta
 import collections as clt
 import pandas as pd
-import random
+import random as rd
 
 # Step 2. 경마정보조회를 위한 요청변수 및 요청주소 등을 구성합니다.
 # Step 2-1. Looging을 위하여 공통 모듈에서 로거를 정의합니다.
@@ -19,7 +18,7 @@ f = cm.pre_logging() # 등록마 조회 결과 파일을 로딩
 
 # Step 2-2. '4-1'에서 저장한 파일을 이용하여 해당 데이터를 로딩합니다.
 c = []
-fn = os.getcwd() + '/data/' + 'RegisteredHorse.da' # url = 'http://data.kra.co.kr/publicdata/service/hrReg/getHrReg' # 등록마 조회
+fn = os.getcwd() + '/data/' + 'RegisteredHorse.da' # url = 'http://data.kra.co.kr/publicdata/service/hrReg/getHrReg' # 등록마 조회 (meet)
 c.append(cm.open_file(fn, True))
 cm.logF(f, c)
 
@@ -33,6 +32,7 @@ for i in range(0, len(c)):
         item = _djson['response']['body']['items']['item']
 
         # pp.pprint(item)
+        cm.logF(f, item)
         if (isinstance(item, dict)):
             data.append(item)
         else:
@@ -40,14 +40,12 @@ for i in range(0, len(c)):
     except Exception as e:
         continue
 
-# pp.pprint(data)
 cm.logF(f, data)
 
 # Step 3-1. data에서 일부 데이터(전체 갯수의 10%수준)를 추출합니다.
-data = random.sample(data, int(len(data) * 0.1))
-# pp.pprint(data)
+data = rd.sample(data, int(len(data) * 0.1))
 cm.logF(f, data)
-np.random.shuffle(data)
+rd.shuffle(data)
 
 # Step 3-2. 일부 데이터를 기준으로 각 요소의 빈도를 집계합니다.
 # color : 경주마 털색, sex : 경주마 성별
@@ -55,11 +53,6 @@ df = pd.DataFrame(data)
 cm.logF(f, df)
 
 color_counts = clt.Counter(df['color'])
-'''stat = pd.DataFrame(
-    np.vstack(np.array(list(color_counts.keys()))), columns=['color']
-)
-stat['count'] = pd.Series(np.array(list(color_counts.values())))
-stat['point'] = pd.Series([10, 5, 3, 2])'''
 stat = pd.DataFrame(
     {'color' : list(color_counts.keys()), 'count' : list(color_counts.values()), 'point' : [10, 5, 3, 2]}
 )

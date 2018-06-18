@@ -8,15 +8,13 @@ font_name = font_manager.FontProperties(fname="c:/Windows/Fonts/malgun.ttf").get
 rc('font', family=font_name)
 import os
 import numpy as np
-from datetime import date, timedelta
 import collections as clt
-import pandas as pd
 
 # Step 2. 경마정보조회를 위한 요청변수 및 요청주소 등을 구성합니다.
-url = 'http://data.kra.co.kr/publicdata/service/hrReg/getHrReg' # 등록마 조회
+url = 'http://data.kra.co.kr/publicdata/service/hrReg/getHrReg' # 등록마 조회 (meet)
 
 c = []
-params = 'serviceKey=%s' % cm.get_serviceKey()
+params = 'serviceKey=%s&meet=1' % cm.get_serviceKey()
 print('params : ', params)
 # 저장을 원할 경우, 화일명을 정의한다.
 fn = os.getcwd() + '/data/' + 'RegisteredHorse.da'

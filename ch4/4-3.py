@@ -1,17 +1,16 @@
 # Step 1. 필요한 모듈을 import합니다.
 # -*- coding: utf-8 -*-
 import common.common as cm
-import pprint as pp
 import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
 font_name = font_manager.FontProperties(fname="c:/Windows/Fonts/malgun.ttf").get_name()
 rc('font', family=font_name)
 import os
 import numpy as np
-from datetime import date, timedelta
+from datetime import date
 import collections as clt
 import pandas as pd
-import random
+import random as rd
 
 # Step 2. 경마정보조회를 위한 요청변수 및 요청주소 등을 구성합니다.
 # Step 2-1. Looging을 위하여 공통 모듈에서 로거를 정의합니다.
@@ -19,12 +18,11 @@ f = cm.pre_logging() # 등록마 조회 결과 파일을 로딩
 
 # Step 2-2. '4-1'에서 저장한 파일을 이용하여 해당 데이터를 로딩합니다.
 c = []
-fn = os.getcwd() + '/data/' + 'RegisteredHorse.da' # url = 'http://data.kra.co.kr/publicdata/service/hrReg/getHrReg' # 등록마 조회
+fn = os.getcwd() + '/data/' + 'RegisteredHorse.da' # url = 'http://data.kra.co.kr/publicdata/service/hrReg/getHrReg' # 등록마 조회 (meet)
 c.append(cm.open_file(fn, True))
 cm.logF(f, c)
 
 # Step 3. item의 구조를 분석하고, 분석하고자 하는 값들을 추출하기 위한 데이터를 전처리합니다.
-pp = pp.PrettyPrinter(indent=4)
 data = []
 for i in range(0, len(c)):
     try:
@@ -32,7 +30,7 @@ for i in range(0, len(c)):
         _djson = cm.x2j(c[i])
         item = _djson['response']['body']['items']['item']
 
-        # pp.pprint(item)
+        cm.logF(f, item)
         if (isinstance(item, dict)):
             data.append(item)
         else:
@@ -40,14 +38,12 @@ for i in range(0, len(c)):
     except Exception as e:
         continue
 
-# pp.pprint(data)
 cm.logF(f, data)
 
 # Step 3-1. data에서 일부 데이터(전체 갯수의 10%수준)를 추출합니다.
-data = random.sample(data, int(len(data) * 0.1))
-# pp.pprint(data)
+data = rd.sample(data, int(len(data) * 0.1))
 cm.logF(f, data)
-np.random.shuffle(data)
+rd.shuffle(data)
 
 # Step 3-2. 일부 데이터를 기준으로 각 요소의 빈도를 집계합니다.
 # color : 경주마 털색, sex : 경주마 성별
@@ -64,12 +60,11 @@ cm.logF(f, stat)
 # Step 3-3. point(사건이 발생할 때의 결과:이득)를 정하기 위한 데이터 추출 및 처리
 # Step 3-3-1. 경마정보조회를 위한 요청변수 및 요청주소 등을 구성하고 응답결과를 저장합니다.
 url = 'http://data.kra.co.kr/publicdata/service/race/getRace' # 경주성적표 조회(meet, rcDate)
-meet = ['1', '2', '3'] # 1 : 서울, 2 : 제주, 3 : 부경
+meet = ['1'] # , '2', '3'] # 1 : 서울, 2 : 제주, 3 : 부경
 month = str(date.today().strftime('%Y%m'))
 sub_c = []
 for i in range(0, len(meet)):
     params = 'serviceKey=%s&meet=%s&rcDate=%s' % (cm.get_serviceKey(), meet[i], month)
-    print('params : ', params)
     # 저장을 원할 경우, 화일명을 정의한다.
     fn = os.getcwd() + '/data/' + '4-2_ext_4-3_%s-%s.da' % (meet[i], month)
     # 서비스 호출
@@ -99,7 +94,6 @@ cm.logF(f, sub_df)
 sex_counts = clt.Counter(sub_df['sex'])
 number_of_total_event_occurs = len(sub_data)
 df_sex = pd.DataFrame(
-    # {'sex' : list(sex_counts.keys()), 'count' : list(sex_counts.values()), 'point' : ((np.array(list(sex_counts.values())) / number_of_total_event_occurs))}
     {'sex' : list(sex_counts.keys()), 'point' : ((np.array(list(sex_counts.values())) / number_of_total_event_occurs))}
 )
 cm.logF(f, df_sex)
